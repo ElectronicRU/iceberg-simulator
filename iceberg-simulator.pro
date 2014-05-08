@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     singularstate.cpp \
-    history.cpp
+    history.cpp \
+    velocitymap.cpp
 
 HEADERS  += mainwindow.h \
     singularstate.h \
     core.h \
-    history.h
+    history.h \
+    velocitymap.h
 
 FORMS    += mainwindow.ui
 

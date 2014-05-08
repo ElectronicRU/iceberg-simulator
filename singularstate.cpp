@@ -51,7 +51,7 @@ void SingularState::generate_enclosed(QPolygonF shape, qreal density)
     //Calculating the amount of points needed.
     qreal area = 0;
     QPointF s = shape[0];
-    for (i = 2; i < shape.size(); i++) {
+    for (int i = 2; i < shape.size(); i++) {
         QPointF v1 = shape[i-1] - s, v2 = shape[i] - s;
         area += v1.x() * v2.y() - v1.y() * v2.x();
     }
@@ -65,8 +65,8 @@ void SingularState::generate_enclosed(QPolygonF shape, qreal density)
     // The following is a bit cheesy, but indubitably simple and fast enough for real-life purposes.
     std::random_device rd;
     std::default_random_engine engine(rd());
-    uniform_real_distribution<qreal> randx(x1, std::nextafter(x2, std::numeric_limits<qreal>::max()));
-    uniform_real_distribution<qreal> randy(y1, std::nextafter(y2, std::numeric_limits<qreal>::max());
+    std::uniform_real_distribution<qreal> randx(x1, std::nextafter(x2, std::numeric_limits<qreal>::max()));
+    std::uniform_real_distribution<qreal> randy(y1, std::nextafter(y2, std::numeric_limits<qreal>::max()));
     while (number_of_points)
     {
         QPointF p(randx(engine), randy(engine));
@@ -102,22 +102,22 @@ void SingularState::recalculate(int from, int to)
     for (int i = from; i < to; i++) {
         qreal h = QUANTUM;
         Particle &p = particles[i];
-        QPoint pos[4], vel[4], force[4];
-        pos[0] = p.position; vel[0] = p.velocity; force[0] = QPoint();
-        pos[1] = pos[0] + h/2 * vel[0]; vel[1] = vel[0] + h/2 * force[0]; force[1] = QPoint();
-        pos[2] = pos[0] + h/2 * vel[1]; vel[1] = vel[0] + h/2 * force[1]; force[2] = QPoint();
-        pos[3] = pos[0] + h * vel[2]; vel[1] = vel[0] + h * force[2]; force[3] = QPoint();
+        QPointF pos[4], vel[4], force[4];
+        pos[0] = p.position; vel[0] = p.velocity; force[0] = QPointF();
+        pos[1] = pos[0] + h/2 * vel[0]; vel[1] = vel[0] + h/2 * force[0]; force[1] = QPointF();
+        pos[2] = pos[0] + h/2 * vel[1]; vel[1] = vel[0] + h/2 * force[1]; force[2] = QPointF();
+        pos[3] = pos[0] + h * vel[2]; vel[1] = vel[0] + h * force[2]; force[3] = QPointF();
         p.position += h * ((vel[0] + vel[3])/ 6 + (vel[1] + vel[2]) / 3);
         p.velocity += h * ((force[0] + force[3]) / 6 + (force[1] + force[2]) / 3);
     }
 }
 
-void SingularState::load_stream(QDataStream input)
+void SingularState::load_stream(QDataStream &input)
 {
-    input >> particles;
+    //input >> particles;
 }
 
-void SingularState::save_stream(QDataStream output)
+void SingularState::save_stream(QDataStream &output)
 {
-    output << particles;
+    //output << particles;
 }

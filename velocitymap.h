@@ -1,11 +1,10 @@
 #ifndef VELOCITYMAP_H
 #define VELOCITYMAP_H
 
-#include "service.h"
+#include "core.h"
 #include <string>
 
-using namespace std;
-
+namespace Simulation {
 class VelocityMap
 {
 private:
@@ -22,14 +21,13 @@ public:
     double GetNumber(unsigned int n, unsigned int m);                // дает Pos_Vel[n][m]
     void SetNumber(unsigned int n, unsigned int m, double Var);     // устанавливает Pos_Vel[n][m] = Val
 
-    double* operator[](unsigned int n);
+    void Load_Stream(std::string FileName);                               // загрузка   с файла FileName
+    void Save_Stream(std::string FileName);                              // сохранение в
 
-    void Load_Stream(string FileName);                               // загрузка   с файла FileName
-    void Save_Stream(string FileName);                              // сохранение в
-
-    double* Get_Velocity_At(double x, double y);                    // интерполяция
-    double* Calculate_Force(double x, double y);                    // расчет силы давления воды в точке (x,y)
+    QPointF Get_Velocity_At(double x, double y);                    // интерполяция
+    QPointF Calculate_Force(double x, double y);                    // расчет силы давления воды в точке (x,y)
 
 };
+}
 
 #endif // VELOCITYMAP_H

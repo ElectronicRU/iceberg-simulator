@@ -13,13 +13,13 @@ History::History(SingularState s)
 void Simulation::History::load_stream(QDataStream input)
 {
     qint32 icursor;
-    input >> icursor >> states >> maxtime;
-    cursor = icursor;
+    //input >> icursor >> states >> maxtime;
+    //cursor = icursor;
 }
 
 void Simulation::History::save_stream(QDataStream output)
 {
-    output << (qint32) cursor << states << maxtime;
+    //output << (qint32) cursor << states << maxtime;
 }
 
 void History::continue_history(qreal time)
@@ -27,10 +27,10 @@ void History::continue_history(qreal time)
     maxtime = time;
     int delta = qRound(maxtime / QUANTUM) - states.size();
     SingularState *st = &states.last();
-    for (i = 0; i < delta; i++) {
+    for (int i = 0; i < delta; i++) {
         // I feel bad, but I have hopes for C++11 move semantics. Please, let no deep copy occur!
         // Seriously though, managing a list of ALLOCATED SingularStates by hand is more hellish.
-        states.append(SingluarState());
+        states.append(SingularState());
         states.last().full_update(st);
         st = &states.last();
     }
@@ -42,7 +42,7 @@ void History::seek(qreal time)
     cursor = qRound(time / QUANTUM);
 }
 
-void History::tell()
+qreal History::tell()
 {
     return cursor * QUANTUM;
 }
@@ -55,7 +55,7 @@ void History::add_particles(QList<QPointF> points)
 
 void History::remove_particles(QList<int> positions)
 {
-    for (i = cursor; i < states.size(); i++)
+    for (int i = cursor; i < states.size(); i++)
     {
         states[i].remove_particles(positions);
     }
@@ -63,7 +63,7 @@ void History::remove_particles(QList<int> positions)
 
 void History::chain_update()
 {
-    for (i = cursor + 1; i < states.size(); i++)
+    for (int i = cursor + 1; i < states.size(); i++)
     {
         states[i].full_update(&states[i-1]);
     }

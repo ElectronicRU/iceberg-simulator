@@ -17,7 +17,7 @@ public:
     QList<int> find_enclosed(QPolygonF shape);
     void generate_enclosed(QPolygonF shape, qreal density);
     void update_from(SingularState* ancestor);
-    void full_update(const SingularState &ancestor);
+    void full_update(SingularState *ancestor);
 private:
     QVector<Particle> particles; // todo stress-test against a QVector
     void recalculate(int from, int to);

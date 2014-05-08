@@ -5,10 +5,9 @@
 #include <math.h>
 
 #include "velocitymap.h"
-#include "service.h"
+#include "core.h"
 
-using namespace std;
-
+using namespace Simulation;
 
 VelocityMap::VelocityMap(unsigned int n, unsigned int m, bool IsFromFile)
 {
@@ -31,10 +30,10 @@ VelocityMap::~VelocityMap()
 }
 
 
-void VelocityMap::Load_Stream (string FileName) // Функция загрузки из потока данных матрицы n x m
+void VelocityMap::Load_Stream(std::string FileName) // Функция загрузки из потока данных матрицы n x m
 {
     double Var;                                  // переменные
-    ifstream file;                              // поток чтения из файла
+    std::ifstream file;                              // поток чтения из файла
 
     unsigned int i, j;                         // i - столбцы, j - строки
 
@@ -44,7 +43,7 @@ void VelocityMap::Load_Stream (string FileName) // Функция загрузк
     // Проверка успешности открытия файла
     if (file.fail())
         {
-            cout<<"\n Error of the file opening - Loading";
+            std::cout<<"\n Error of the file opening - Loading";
                    exit(1);
         }
 
@@ -62,30 +61,30 @@ void VelocityMap::Load_Stream (string FileName) // Функция загрузк
 }
 
 
-void VelocityMap::Save_Stream(string FileName)   // Функция сохранения в поток данных
+void VelocityMap::Save_Stream(std::string FileName)   // Функция сохранения в поток данных
 {
  double Var;
- ofstream file;                                            // поток записи в файл
+ std::ofstream file;                                            // поток записи в файл
  unsigned int i,j;
 
  file.open(FileName.c_str());
 
    if (file.fail())
    {
-       cout<<"\n Error of the file opening - Saving";
+       std::cout<<"\n Error of the file opening - Saving";
        exit(1);
    }
 
   for(i=0; i < XIndex; i++)
    {
-      file << endl;
+      file << std::endl;
       for(j=0; j < YIndex; j++)
       {
             Var = this->GetNumber(i, j);
             file << Var << " ";
       }
    }
- cout << "The data was recorded" << endl;
+ std::cout << "The data was recorded" << std::endl;
  file.close();
 }
 
@@ -114,7 +113,7 @@ void VelocityMap::SetNumber(unsigned int n, unsigned int m, double Var)
 }
 
 
-double* VelocityMap::Get_Velocity_At (double x, double y)            // Интерполяция
+QPointF VelocityMap::Get_Velocity_At (double x, double y)            // Интерполяция
 
 {
     //Хотим попасть в нужный квадрат
@@ -162,7 +161,7 @@ double* VelocityMap::Get_Velocity_At (double x, double y)            // Инте
     {
         if (x0>m || x0<0 || y0>n || y0<0)
         {
-        cout << "Вышли за границу карты";
+        std::cout << "Вышли за границу карты";
         }
 
         if (y0 == n)                  // на верхней границе
@@ -195,26 +194,24 @@ double* VelocityMap::Get_Velocity_At (double x, double y)            // Инте
     double Vx = (y1-y)*VR1x + (y-y0)*VR2x;             // (y1-y0) = 1
     double Vy = (y1-y)*VR1y + (y-y0)*VR2y;
 
-    double V[2]= {Vx, Vy};
-//    cout << Vx << " " << Vy << endl;
-    return V;
+    return QPointF(Vx, Vy);
 }
 
 
-double* VelocityMap::Calculate_Force (double x, double y)                      // Сила F = P*S; P = [ro*v^2]/2 - Bernulli; x, y нужно будет заменит на i - номер частицы(узнаем из SingularState)
+QPointF VelocityMap::Calculate_Force (double x, double y)                      // Сила F = P*S; P = [ro*v^2]/2 - Bernulli; x, y нужно будет заменит на i - номер частицы(узнаем из SingularState)
 {
 
-    double* v;
+    QPointF v;
     v = Get_Velocity_At(x,y);
 
-    double vx = v[0];
-    double vy = v[1];
+    double vx = v.x();
+    double vy = v.y();
 
     double F[2];
-    F[0] = S*ro*sqrt(pow(vx,2)+pow(vy,2))*vx/2;                   // Fx
-    F[1] = S*ro*sqrt(pow(vx,2)+pow(vy,2))*vy/2;                   // Fy
+    F[0] = AREA * DENSITY * sqrt(pow(vx,2)+pow(vy,2))*vx/2;                   // Fx
+    F[1] = AREA * DENSITY * sqrt(pow(vx,2)+pow(vy,2))*vy/2;                   // Fy
 
-    return F;
+    return QPointF(F[0], F[1]);
 }
 
 

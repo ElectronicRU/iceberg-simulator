@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include "velocitymap.h"
+
+using namespace Simulation;
 
 int main(int argc, char *argv[])
 {
@@ -25,5 +28,4 @@ int main(int argc, char *argv[])
 */
 
     return a.exec();
-    delete map;
 }
