@@ -13,8 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    singularstate.cpp \
+    history.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    singularstate.h \
+    core.h \
+    history.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    mainwindow.qrc
