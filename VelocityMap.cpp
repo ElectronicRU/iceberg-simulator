@@ -1,23 +1,25 @@
-#include "velocitymap.h"
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <iomanip>
 #include <math.h>
+
+#include "velocitymap.h"
 #include "service.h"
 
 using namespace std;
 
+
 VelocityMap::VelocityMap(unsigned int n, unsigned int m, bool IsFromFile)
 {
     unsigned int i;
-    Velocities = new double* [n];
+    Pos_Vel = new double* [n];
     for (i = 0; i < n; i++)
-        Velocities[i] = new double [m];
-    if (IsFromFile)
-        this->Load_Stream(Load_Vel);
+        Pos_Vel[i] = new double [m];
     XIndex = n;
     YIndex = m;
+    if (IsFromFile)
+        this->Load_Stream(Load_Vel);
 }
 
 
@@ -25,7 +27,7 @@ VelocityMap::~VelocityMap()
 {
     unsigned int i;
     for (i = 0; i < XIndex; i++)
-        delete [] Velocities[i];
+        delete [] Pos_Vel[i];
 }
 
 
@@ -80,7 +82,7 @@ void VelocityMap::Save_Stream(string FileName)   // Функция сохран�
       for(j=0; j < YIndex; j++)
       {
             Var = this->GetNumber(i, j);
-            file << Var << endl;
+            file << Var << " ";
       }
    }
  cout << "The data was recorded" << endl;
@@ -91,7 +93,7 @@ void VelocityMap::Save_Stream(string FileName)   // Функция сохран�
 double VelocityMap::GetNumber(unsigned int n, unsigned int m)
 {
     if (n < XIndex && m < YIndex)
-        return Velocities[n][m];
+        return Pos_Vel[n][m];
     else
         return 30000000; // c
 }
@@ -108,7 +110,7 @@ double VelocityMap::GetNumber(unsigned int n, unsigned int m)
 void VelocityMap::SetNumber(unsigned int n, unsigned int m, double Var)
 {
     if (n < XIndex && m < YIndex)
-        Velocities[n][m] = Var;
+        Pos_Vel[n][m] = Var;
 }
 
 
@@ -120,7 +122,7 @@ double* VelocityMap::Get_Velocity_At (double x, double y)            // Инте
     int int_x = x;                                    // целая часть
     int int_y = y;
 
-    Load_Stream(Load_Vel);                            // загружаем карту скоростей
+    this->Load_Stream(Load_Vel);                            // загружаем карту скоростей
 
     int n = GetNumber(0,0);                           // высота карты
     int m = GetNumber(0,1);                           // ширина
@@ -214,6 +216,8 @@ double* VelocityMap::Calculate_Force (double x, double y)                      /
 
     return F;
 }
+
+
 
 
 
