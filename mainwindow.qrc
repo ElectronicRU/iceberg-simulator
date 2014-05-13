@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/media-pause-32.png</file>
+        <file>images/media-play-32.png</file>
+        <file>images/media-skip-backward-32.png</file>
+        <file>images/media-skip-forward-32.png</file>
+        <file>images/media-stop-32.png</file>
+        <file>images/file-load-map-32.png</file>
+        <file>images/file-open-32.png</file>
+        <file>images/file-save-32.png</file>
+        <file>Load_Vel.txt</file>
+        <file>Save_Vel.txt</file>
+    </qresource>
+</RCC>

@@ -2,7 +2,8 @@
 #define VELOCITYMAP_H
 
 #include "core.h"
-#include <string>
+#include <QSize>
+#include <QString>
 
 namespace Simulation {
 class VelocityMap
@@ -21,8 +22,10 @@ public:
     double GetNumber(unsigned int n, unsigned int m);                // дает Pos_Vel[n][m]
     void SetNumber(unsigned int n, unsigned int m, double Var);     // устанавливает Pos_Vel[n][m] = Val
 
-    void Load_Stream(std::string FileName);                               // загрузка   с файла FileName
-    void Save_Stream(std::string FileName);                              // сохранение в
+    void Load_Stream(QString FileName);                               // загрузка   с файла FileName
+    void Save_Stream(QString FileName);                              // сохранение в
+
+    QSize get_size();
 
     QPointF Get_Velocity_At(double x, double y);                    // интерполяция
     QPointF Calculate_Force(double x, double y);                    // расчет силы давления воды в точке (x,y)

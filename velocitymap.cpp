@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iomanip>
 #include <math.h>
+#include <QFile>
+#include <QTextStream>
 
 #include "velocitymap.h"
 #include "core.h"
@@ -30,28 +32,30 @@ VelocityMap::~VelocityMap()
 }
 
 
-void VelocityMap::Load_Stream(std::string FileName) // Функция загрузки из потока данных матрицы n x m
+void VelocityMap::Load_Stream(QString FileName) // Функция загрузки из потока данных матрицы n x m
 {
     double Var;                                  // переменные
-    std::ifstream file;                              // поток чтения из файла
+    QFile file(FileName);                              // поток чтения из файла
 
     unsigned int i, j;                         // i - столбцы, j - строки
 
     // Открытие файла
-    file.open(FileName.c_str());
+
 
     // Проверка успешности открытия файла
-    if (file.fail())
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             std::cout<<"\n Error of the file opening - Loading";
                    exit(1);
         }
 
+    QTextStream stream(&file);
+
     for (i=0; i < XIndex; i++)
     {
         for(j=0; j < YIndex; j++)
         {
-            file >> Var;
+            stream >> Var;
             this->SetNumber(i, j, Var);
         }
     }
@@ -61,31 +65,37 @@ void VelocityMap::Load_Stream(std::string FileName) // Функция загру
 }
 
 
-void VelocityMap::Save_Stream(std::string FileName)   // Функция сохранения в поток данных
+void VelocityMap::Save_Stream(QString FileName)   // Функция сохранения в поток данных
 {
  double Var;
- std::ofstream file;                                            // поток записи в файл
+ QFile file(FileName);                                           // поток записи в файл
  unsigned int i,j;
 
- file.open(FileName.c_str());
-
-   if (file.fail())
+   if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
    {
        std::cout<<"\n Error of the file opening - Saving";
        exit(1);
    }
 
+   QTextStream stream(&file);
+
   for(i=0; i < XIndex; i++)
    {
-      file << std::endl;
+      stream << endl;
       for(j=0; j < YIndex; j++)
       {
             Var = this->GetNumber(i, j);
-            file << Var << " ";
+            stream << Var << " ";
       }
    }
  std::cout << "The data was recorded" << std::endl;
+ stream.flush();
  file.close();
+}
+
+QSize VelocityMap::get_size()
+{
+    return QSize(GetNumber(0, 1), GetNumber(0, 0));
 }
 
 

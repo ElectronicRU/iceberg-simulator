@@ -14,30 +14,21 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QSlider" name="horizontalSlider">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>10</y>
-      <width>84</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>140</y>
-      <width>301</width>
-      <height>281</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout"/>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QSlider" name="timeSlider">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::TicksBothSides</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="Visual::HistoryScreen" name="historyScreen"/>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -45,42 +36,288 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
+  <widget class="QToolBar" name="playbackToolBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionLoad"/>
+   <addaction name="actionPlay"/>
+   <addaction name="actionStop"/>
+   <addaction name="actionHome"/>
+   <addaction name="actionEnd"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="fileToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionLoadMap"/>
+   <addaction name="actionOpenFile"/>
+   <addaction name="actionSaveFile"/>
+  </widget>
   <action name="actionPlay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="mainwindow.qrc">
-     <normaloff>:/images/media-play-32.png</normaloff>:/images/media-play-32.png</iconset>
+     <normaloff>:/images/media-play-32.png</normaloff>
+     <normalon>:/images/media-pause-32.png</normalon>:/images/media-play-32.png</iconset>
    </property>
    <property name="text">
-    <string>play</string>
+    <string>Play/Pause</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
    </property>
   </action>
-  <action name="actionLoad">
+  <action name="actionStop">
    <property name="icon">
     <iconset resource="mainwindow.qrc">
      <normaloff>:/images/media-stop-32.png</normaloff>:/images/media-stop-32.png</iconset>
    </property>
    <property name="text">
-    <string>load</string>
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionHome">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/images/media-skip-backward-32.png</normaloff>:/images/media-skip-backward-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>To the beginning</string>
+   </property>
+   <property name="shortcut">
+    <string>Home</string>
+   </property>
+  </action>
+  <action name="actionEnd">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/images/media-skip-forward-32.png</normaloff>:/images/media-skip-forward-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>To the end</string>
+   </property>
+   <property name="shortcut">
+    <string>End</string>
+   </property>
+  </action>
+  <action name="actionLoadMap">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/images/file-load-map-32.png</normaloff>:/images/file-load-map-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Velocity map</string>
+   </property>
+  </action>
+  <action name="actionOpenFile">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/images/file-open-32.png</normaloff>:/images/file-open-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open File</string>
+   </property>
+  </action>
+  <action name="actionSaveFile">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/images/file-save-32.png</normaloff>:/images/file-save-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save File</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Visual::HistoryScreen</class>
+   <extends>QGraphicsView</extends>
+   <header>historyscreen.h</header>
+   <slots>
+    <signal>at(qreal)</signal>
+    <signal>paused()</signal>
+    <signal>maxtimeChanged(qreal)</signal>
+    <slot>seek(qreal)</slot>
+    <slot>playpause()</slot>
+    <slot>stop()</slot>
+    <slot>seek_home()</slot>
+    <slot>seek_end()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="mainwindow.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionPlay</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>historyScreen</receiver>
+   <slot>playpause()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>336</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStop</sender>
+   <signal>triggered()</signal>
+   <receiver>historyScreen</receiver>
+   <slot>stop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>336</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>seekTime(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>409</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>historyScreen</sender>
+   <signal>at(qreal)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>moveSlider(qreal)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStop</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>untogglePlay()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>historyScreen</sender>
+   <signal>paused()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>untogglePlay()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionHome</sender>
+   <signal>triggered()</signal>
+   <receiver>historyScreen</receiver>
+   <slot>seek_home()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionEnd</sender>
+   <signal>triggered()</signal>
+   <receiver>historyScreen</receiver>
+   <slot>seek_end()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>historyScreen</sender>
+   <signal>maxtimeChanged(qreal)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLimits(qreal)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>seekTime(int)</slot>
+  <slot>moveSlider(qreal)</slot>
+  <slot>untogglePlay()</slot>
+  <slot>setLimits(qreal)</slot>
+ </slots>
 </ui>

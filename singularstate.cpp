@@ -3,10 +3,11 @@
 #include <random>
 
 using namespace Simulation;
-SingularState::SingularState()
-    : particles()
+
+
+SingularState::SingularState(VelocityMap *velmap) :
+    velocity_map(velmap), particles()
 {
-    // XXX when we implement VelocityMap, return here.
 }
 
 void SingularState::add_particles(QList<QPointF> points)
@@ -15,6 +16,7 @@ void SingularState::add_particles(QList<QPointF> points)
     {
         Particle new_p;
         new_p.position = p; // XXX calculate the velocity properly
+        new_p.velocity = QPointF(10, 10);
         particles.append(new_p);
     }
 }
@@ -81,7 +83,7 @@ void SingularState::generate_enclosed(QPolygonF shape, qreal density)
 
 
 
-void SingularState::update_from(SingularState *ancestor)
+void SingularState::update_from(const SingularState *ancestor)
 {
     int old_size = particles.size(), new_size = ancestor->particles.size();
     // here, assuming new_size >= old_size
@@ -90,17 +92,24 @@ void SingularState::update_from(SingularState *ancestor)
     recalculate(old_size, new_size);
 }
 
-void SingularState::full_update(SingularState *ancestor)
+void SingularState::full_update(const SingularState *ancestor)
 {
     particles.resize(ancestor->particles.size());
     std::copy(ancestor->particles.begin(), ancestor->particles.end(), particles.begin());
     recalculate(0, particles.size());
 }
 
+SingularState SingularState::successor()
+{
+    SingularState result(velocity_map);
+    result.full_update(this);
+    return result;
+}
+
 void SingularState::recalculate(int from, int to)
 {
     for (int i = from; i < to; i++) {
-        qreal h = QUANTUM;
+        qreal h = STEP;
         Particle &p = particles[i];
         QPointF pos[4], vel[4], force[4];
         pos[0] = p.position; vel[0] = p.velocity; force[0] = QPointF();

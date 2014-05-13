@@ -1,16 +1,28 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include "history.h"
 #include "velocitymap.h"
-
-using namespace Simulation;
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+    std::cout << "hello world" << std::endl;
+
+    Visual::MainWindow w;
     w.show();
     
-    VelocityMap *map = new VelocityMap(19,2,true);
+    Simulation::VelocityMap map(19,2,true);
+    Simulation::History history(&map);
+
+    QList<QPointF> poss;
+    poss << QPointF(0, 0) << QPointF(10, 0);
+    history.add_particles(poss);
+    history.setMaxtime(5);
+
+
+    w.setHistory(&history);
+
     
 /*
   Проверка:
