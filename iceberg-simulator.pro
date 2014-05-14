@@ -30,3 +30,5 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     mainwindow.qrc
+
+CONFIG += qwt

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtCore/QtMath>
+#include <qwt.h>
 
 using namespace Visual;
 
@@ -9,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->timeSlider->setPageStep(qRound(STEP/QUANTUM));
 }
 
 MainWindow::~MainWindow()
@@ -23,16 +23,16 @@ void MainWindow::setHistory(History *history)
     ui->playbackToolBar->setEnabled(true);
 }
 
-void MainWindow::seekTime(int sliderValue)
+void MainWindow::seekTime(double sliderValue)
 {
     if (sliderValue == sliderValueCache)
         return;
-    ui->historyScreen->seek(sliderValue * QUANTUM);
+    ui->historyScreen->seek(sliderValue);
 }
 
 void MainWindow::moveSlider(qreal screenTime)
 {
-    sliderValueCache = qRound(screenTime / QUANTUM);
+    sliderValueCache = screenTime;
     ui->timeSlider->setValue(sliderValueCache);
 }
 
@@ -43,7 +43,8 @@ void MainWindow::untogglePlay()
 
 void MainWindow::setLimits(qreal maxtime)
 {
-    int maxticks = qCeil(maxtime / QUANTUM);
-    ui->timeSlider->setRange(0, maxticks);
+    ui->timeSlider->setUpperBound(maxtime);
+    ui->timeSlider->setTotalSteps(qRound(maxtime / QUANTUM));
+    ui->timeSlider->setPageSteps(qRound(maxtime / STEP));
 }
 

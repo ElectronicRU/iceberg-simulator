@@ -24,14 +24,14 @@ public:
     void setHistory(History *history);
 
 public slots:
-    void seekTime(int sliderValue);
+    void seekTime(double sliderValue);
     void moveSlider(qreal screenTime);
     void untogglePlay();
     void setLimits(qreal maxtime);
 
 private:
     Ui::MainWindow *ui;
-    int sliderValueCache;
+    double sliderValueCache;
 };
 }
 

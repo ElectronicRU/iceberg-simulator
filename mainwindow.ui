@@ -16,12 +16,18 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QSlider" name="timeSlider">
+     <widget class="QwtSlider" name="timeSlider">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <property name="tickPosition">
-       <enum>QSlider::TicksBothSides</enum>
+      <property name="scalePosition">
+       <enum>QwtSlider::LeadingScale</enum>
+      </property>
+      <property name="trough">
+       <bool>false</bool>
+      </property>
+      <property name="groove">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -150,6 +156,11 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>QwtSlider</class>
+   <extends>QWidget</extends>
+   <header>qwt_slider.h</header>
+  </customwidget>
+  <customwidget>
    <class>Visual::HistoryScreen</class>
    <extends>QGraphicsView</extends>
    <header>historyscreen.h</header>
@@ -198,22 +209,6 @@
     <hint type="destinationlabel">
      <x>400</x>
      <y>336</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>timeSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>seekTime(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>409</x>
-     <y>85</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>400</x>
-     <y>299</y>
     </hint>
    </hints>
   </connection>
@@ -313,9 +308,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>timeSlider</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>seekTime(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>382</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>seekTime(int)</slot>
+  <slot>seekTime(double)</slot>
   <slot>moveSlider(qreal)</slot>
   <slot>untogglePlay()</slot>
   <slot>setLimits(qreal)</slot>
