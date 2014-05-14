@@ -28,7 +28,7 @@ public:
     QSize get_size();
 
     QPointF Get_Velocity_At(double x, double y);                    // интерполяция
-    QPointF Calculate_Force(double x, double y);                    // расчет силы давления воды в точке (x,y)
+    QPointF Calculate_Force(double x, double y, QPointF V);                    // расчет силы давления воды в точке (x,y)
 
 };
 }

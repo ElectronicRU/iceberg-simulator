@@ -104,7 +104,7 @@ double VelocityMap::GetNumber(unsigned int n, unsigned int m)
     if (n < XIndex && m < YIndex)
         return Pos_Vel[n][m];
     else
-        return 30000000; // c
+        return 0;
 }
 
 /* double* VelocityMap::operator [](unsigned int n)  // перегрузка операторов [][]
@@ -208,18 +208,24 @@ QPointF VelocityMap::Get_Velocity_At (double x, double y)            // Инте
 }
 
 
-QPointF VelocityMap::Calculate_Force (double x, double y)                      // Сила F = P*S; P = [ro*v^2]/2 - Bernulli; x, y нужно будет заменит на i - номер частицы(узнаем из SingularState)
-{
+QPointF VelocityMap::Calculate_Force (double x, double y, QPointF V)             // Сила F = P*S; P = [ro*v^2]/2 - Bernulli; x, y нужно будет заменит на i - номер частицы(узнаем из SingularState)
+{                                                                               // F(вязк.) = - 6pi*VISCOSITY * (Vчаст.-Vводы) - Stocks ; V - particle, v - H20
 
-    QPointF v;
+    QPointF v;                                                                 // Скорость воды в точке (x,y)
     v = Get_Velocity_At(x,y);
 
     double vx = v.x();
     double vy = v.y();
 
     double F[2];
-    F[0] = AREA * DENSITY * sqrt(pow(vx,2)+pow(vy,2))*vx/2;                   // Fx
+/*    F[0] = AREA * DENSITY * sqrt(pow(vx,2)+pow(vy,2))*vx/2;                   // Fx
     F[1] = AREA * DENSITY * sqrt(pow(vx,2)+pow(vy,2))*vy/2;                   // Fy
+*/
+    double Vx = V.x();
+    double Vy = V.y();
+
+    F[0] = - 6 * PI * VISCOSITY * (Vx - vx);                   // Fx
+    F[1] = - 6 * PI * VISCOSITY * (Vy - vy);                   // Fy
 
     return QPointF(F[0], F[1]);
 }

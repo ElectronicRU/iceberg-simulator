@@ -16,7 +16,7 @@ void SingularState::add_particles(QList<QPointF> points)
     {
         Particle new_p;
         new_p.position = p; // XXX calculate the velocity properly
-        new_p.velocity = QPointF(10, 10);
+        new_p.velocity = velocity_map->Get_Velocity_At(p.x(), p.y());
         particles.append(new_p);
     }
 }
@@ -112,10 +112,10 @@ void SingularState::recalculate(int from, int to)
         qreal h = STEP;
         Particle &p = particles[i];
         QPointF pos[4], vel[4], force[4];
-        pos[0] = p.position; vel[0] = p.velocity; force[0] = QPointF();
-        pos[1] = pos[0] + h/2 * vel[0]; vel[1] = vel[0] + h/2 * force[0]; force[1] = QPointF();
-        pos[2] = pos[0] + h/2 * vel[1]; vel[1] = vel[0] + h/2 * force[1]; force[2] = QPointF();
-        pos[3] = pos[0] + h * vel[2]; vel[1] = vel[0] + h * force[2]; force[3] = QPointF();
+        pos[0] = p.position; vel[0] = p.velocity; force[0] = velocity_map->Calculate_Force(p.position.x(), p.position.y(), p.velocity);
+        pos[1] = pos[0] + h/2 * vel[0]; vel[1] = vel[0] + h/2 * force[0]; force[1] = velocity_map->Calculate_Force(pos[1].x(), pos[1].y(), vel[1]);
+        pos[2] = pos[0] + h/2 * vel[1]; vel[1] = vel[0] + h/2 * force[1]; force[2] = velocity_map->Calculate_Force(pos[2].x(), pos[2].y(), vel[2]);
+        pos[3] = pos[0] + h * vel[2]; vel[1] = vel[0] + h * force[2]; force[3] = velocity_map->Calculate_Force(pos[3].x(), pos[3].y(), vel[3]);
         p.position += h * ((vel[0] + vel[3])/ 6 + (vel[1] + vel[2]) / 3);
         p.velocity += h * ((force[0] + force[3]) / 6 + (force[1] + force[2]) / 3);
     }
