@@ -224,8 +224,8 @@ QPointF VelocityMap::Calculate_Force (double x, double y, QPointF V)            
     double Vx = V.x();
     double Vy = V.y();
 
-    F[0] = - 6 * PI * VISCOSITY * (Vx - vx);                   // Fx
-    F[1] = - 6 * PI * VISCOSITY * (Vy - vy);                   // Fy
+    F[0] = - 6 * PI * RADIUS * VISCOSITY * (Vx - vx);                   // Fx
+    F[1] = - 6 * PI * RADIUS * VISCOSITY * (Vy - vy);                   // Fy
 
     return QPointF(F[0], F[1]);
 }
