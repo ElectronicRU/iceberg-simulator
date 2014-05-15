@@ -39,9 +39,6 @@ void VelocityMap::Load_Stream(QString FileName) // Функция загрузк
 
     unsigned int i, j;                         // i - столбцы, j - строки
 
-    // Открытие файла
-
-
     // Проверка успешности открытия файла
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
@@ -209,7 +206,7 @@ QPointF VelocityMap::Get_Velocity_At (double x, double y)            // Инте
 
 
 QPointF VelocityMap::Calculate_Force (double x, double y, QPointF V)             // Сила F = P*S; P = [ro*v^2]/2 - Bernulli; x, y нужно будет заменит на i - номер частицы(узнаем из SingularState)
-{                                                                               // F(вязк.) = - 6pi*VISCOSITY * (Vчаст.-Vводы) - Stocks ; V - particle, v - H20
+{                                                                               // F(вязк.) = - 6pi * VISCOSITY * R * (Vчаст.-Vводы) - Stocks ; V - particle, v - H20
 
     QPointF v;                                                                 // Скорость воды в точке (x,y)
     v = Get_Velocity_At(x,y);
