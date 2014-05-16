@@ -168,7 +168,7 @@ QPointF VelocityMap::Get_Velocity_At (double x, double y)            // Инте
     {
         if (x0>m || x0<0 || y0>n || y0<0)
         {
-        std::cout << "Вышли за границу карты";
+            return QPointF(0, 0);
         }
 
         if (y0 == n)                  // на верхней границе

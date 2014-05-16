@@ -9,6 +9,7 @@ HistoryScreen::HistoryScreen(QWidget *parent) :
     starttime(0), timer(this)
 {
     setScene(scene);
+    setRenderHint(QPainter::Antialiasing);
     QTransform m;
     m.scale(SCALE, -SCALE);
     setTransform(m);
@@ -40,7 +41,7 @@ void HistoryScreen::set_history(History *value)
         scene->addItem(v);
         particle_views.append(v);
     }
-    setSceneRect(QRectF(QPointF(),
+    scene->setSceneRect(QRectF(QPointF(),
                         history->get_velocity_map()->get_size()));
     update_scene(0);
     emit maxtimeChanged(history->getMaxtime());

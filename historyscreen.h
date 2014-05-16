@@ -12,7 +12,7 @@
 
 namespace Visual {
 using Simulation::History;
-const qreal SCALE = 10.0;
+const qreal SCALE = 20.0;
 class ParticleView : public QAbstractGraphicsShapeItem
 {
 public:
