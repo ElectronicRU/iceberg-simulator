@@ -20,7 +20,7 @@ VelocityMap::VelocityMap(unsigned int n, unsigned int m, bool IsFromFile)
     XIndex = n;
     YIndex = m;
     if (IsFromFile)
-        this->Load_Stream(Load_Vel);
+        this->Load_Stream(Load_Vel); // ХХХ нужно исправить!
 }
 
 
@@ -78,7 +78,7 @@ void VelocityMap::Save_Stream(QString FileName)   // Функция сохран
 
   for(i=0; i < XIndex; i++)
    {
-      stream << endl;
+      stream << "\n\n";
       for(j=0; j < YIndex; j++)
       {
             Var = this->GetNumber(i, j);
@@ -225,6 +225,17 @@ QPointF VelocityMap::Calculate_Force (double x, double y, QPointF V)            
     F[1] = - 6 * PI * RADIUS * VISCOSITY * (Vy - vy);                   // Fy
 
     return QPointF(F[0], F[1]);
+}
+
+
+QString VelocityMap::FileName() const
+{
+    return m_FileName;
+}
+
+void VelocityMap::setFileName(const QString &FileName)
+{
+    m_FileName = FileName;
 }
 
 

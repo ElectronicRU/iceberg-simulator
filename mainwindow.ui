@@ -142,6 +142,12 @@
    <property name="text">
     <string>Load Velocity map</string>
    </property>
+   <property name="iconText">
+    <string>Load Velocity map </string>
+   </property>
+   <property name="toolTip">
+    <string>Load Velocity map(Ctrl+M)</string>
+   </property>
   </action>
   <action name="actionOpenFile">
    <property name="icon">
@@ -151,6 +157,9 @@
    <property name="text">
     <string>Open File</string>
    </property>
+   <property name="toolTip">
+    <string>Open File (Ctrl+O)</string>
+   </property>
   </action>
   <action name="actionSaveFile">
    <property name="icon">
@@ -159,6 +168,9 @@
    </property>
    <property name="text">
     <string>Save File</string>
+   </property>
+   <property name="toolTip">
+    <string>Save File (Ctrl+S)</string>
    </property>
   </action>
  </widget>

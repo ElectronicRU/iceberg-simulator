@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "ui_mainwindow.h"
 #include "core.h"
 #include "history.h"
 
@@ -13,6 +14,7 @@ namespace Visual {
 using Simulation::QUANTUM;
 using Simulation::STEP;
 using Simulation::History;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,6 +30,13 @@ public slots:
     void moveSlider(qreal screenTime);
     void untogglePlay();
     void setLimits(qreal maxtime);
+
+    void loadMap();
+    void openFile();
+    void saveFile();
+
+private slots:
+    void updateActions();
 
 private:
     Ui::MainWindow *ui;

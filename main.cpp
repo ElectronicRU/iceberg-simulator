@@ -16,9 +16,9 @@ int main(int argc, char *argv[])
     Simulation::History history(&map);
 
     QList<QPointF> poss;
-    poss << QPointF(0, 0) << QPointF(0, 1) <<  QPointF(7, 7);
+    poss << QPointF(0, 0) /*<< QPointF(0, 1) <<  QPointF(7, 7)*/;
     history.add_particles(poss);
-    history.setMaxtime(20);
+    history.setMaxtime(5);
 
 
     w.setHistory(&history);

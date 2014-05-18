@@ -13,10 +13,11 @@ private:
     unsigned int XIndex;   // размеры массива - строки
     unsigned int YIndex;   //                 - столбцы
     double **Pos_Vel;   // массив, где будем хранить карту
+    QString m_FileName;
 
 public:
 
-    VelocityMap(unsigned int n,unsigned int m, bool IsFromFile);     // устанавливаем размер массива n x m, говорим: с файла ли данные
+    VelocityMap(unsigned int n,unsigned int m, bool IsFromFile);     // устанавливаем размер массива n x m, говорим: с файла ли данные?
     ~VelocityMap();                                                 // деструктор
 
     double GetNumber(unsigned int n, unsigned int m);                // дает Pos_Vel[n][m]
@@ -24,6 +25,9 @@ public:
 
     void Load_Stream(QString FileName);                               // загрузка   с файла FileName
     void Save_Stream(QString FileName);                              // сохранение в
+
+    QString FileName() const;
+    void setFileName(const QString &FileName);
 
     QSize get_size();
 
