@@ -24,6 +24,7 @@ History *HistoryScreen::get_history() const
 
 void HistoryScreen::set_history(History *value)
 {
+    delete history;
     history = value;
     scene->clear();
     particle_views.clear();

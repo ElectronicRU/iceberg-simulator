@@ -4,35 +4,33 @@
 #include "core.h"
 #include <QSize>
 #include <QString>
+#include <QFile>
 
 namespace Simulation {
 class VelocityMap
 {
+friend class History;
 private:
 
-    unsigned int XIndex;   // размеры массива - строки
-    unsigned int YIndex;   //                 - столбцы
+    unsigned int Size;   // размеры массива - строки
     double **Pos_Vel;   // массив, где будем хранить карту
-    QString m_FileName;
 
 public:
 
-    VelocityMap(unsigned int n,unsigned int m, bool IsFromFile);     // устанавливаем размер массива n x m, говорим: с файла ли данные?
+    VelocityMap(unsigned int n);     // устанавливаем размер массива n
     ~VelocityMap();                                                 // деструктор
 
-    double GetNumber(unsigned int n, unsigned int m);                // дает Pos_Vel[n][m]
+    double GetNumber(unsigned int n, unsigned int m) const;                // дает Pos_Vel[n][m]
     void SetNumber(unsigned int n, unsigned int m, double Var);     // устанавливает Pos_Vel[n][m] = Val
 
-    void Load_Stream(QString FileName);                               // загрузка   с файла FileName
-    void Save_Stream(QString FileName);                              // сохранение в
-
-    QString FileName() const;
-    void setFileName(const QString &FileName);
+    static VelocityMap* LoadText(QFile *file);                               // загрузка   с файла FileName
+    static VelocityMap* load_stream(QDataStream &input);
+    void save_stream(QDataStream &output);
 
     QSize get_size();
 
-    QPointF Get_Velocity_At(double x, double y);                    // интерполяция
-    QPointF Calculate_Force(double x, double y, QPointF V);                    // расчет силы давления воды в точке (x,y)
+    QPointF Get_Velocity_At(double x, double y) const;                    // интерполяция
+    QPointF Calculate_Force(double x, double y, QPointF V) const;                    // расчет силы давления воды в точке (x,y)
 
 };
 }

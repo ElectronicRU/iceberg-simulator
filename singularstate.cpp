@@ -2,15 +2,14 @@
 #include <QtCore/qmath.h>
 #include <random>
 
-using namespace Simulation;
+namespace Simulation {
 
-
-SingularState::SingularState(VelocityMap *velmap) :
-    velocity_map(velmap), particles()
+SingularState::SingularState() :
+    particles()
 {
 }
 
-void SingularState::add_particles(QList<QPointF> points)
+void SingularState::add_particles(QList<QPointF> points, const VelocityMap *velocity_map)
 {
     for (auto p: points)
     {
@@ -48,7 +47,7 @@ QList<int> SingularState::find_enclosed(QPolygonF shape)
     return res;
 }
 
-void SingularState::generate_enclosed(QPolygonF shape, qreal density)
+void SingularState::generate_enclosed(QPolygonF shape, qreal density, const VelocityMap *velocity_map)
 {
     //Calculating the amount of points needed.
     qreal area = 0;
@@ -78,35 +77,35 @@ void SingularState::generate_enclosed(QPolygonF shape, qreal density)
             points.append(p);
         }
     }
-    add_particles(points);
+    add_particles(points, velocity_map);
 }
 
 
 
-void SingularState::update_from(const SingularState *ancestor)
+void SingularState::update_from(const SingularState *ancestor, const VelocityMap *velocity_map)
 {
     int old_size = particles.size(), new_size = ancestor->particles.size();
     // here, assuming new_size >= old_size
     particles.resize(new_size);
     std::copy(&ancestor->particles[old_size], &ancestor->particles[new_size], &particles[old_size]);
-    recalculate(old_size, new_size);
+    recalculate(old_size, new_size, velocity_map);
 }
 
-void SingularState::full_update(const SingularState *ancestor)
+void SingularState::full_update(const SingularState *ancestor, const VelocityMap *velocity_map)
 {
     particles.resize(ancestor->particles.size());
     std::copy(ancestor->particles.begin(), ancestor->particles.end(), particles.begin());
-    recalculate(0, particles.size());
+    recalculate(0, particles.size(), velocity_map);
 }
 
-SingularState SingularState::successor()
+SingularState SingularState::successor(const VelocityMap *velocity_map)
 {
-    SingularState result(velocity_map);
-    result.full_update(this);
+    SingularState result;
+    result.full_update(this, velocity_map);
     return result;
 }
 
-void SingularState::recalculate(int from, int to)
+void SingularState::recalculate(int from, int to, const VelocityMap *velocity_map)
 {
     for (int i = from; i < to; i++) {
         qreal h = STEP;
@@ -121,12 +120,29 @@ void SingularState::recalculate(int from, int to)
     }
 }
 
-void SingularState::load_stream(QDataStream &input)
+
+
+
+
+
+QDataStream &operator>>(QDataStream &input, Particle &self)
 {
-    //input >> particles;
+    return input >> self.position >> self.velocity;
 }
 
-void SingularState::save_stream(QDataStream &output)
+QDataStream &operator<<(QDataStream &output, const Particle &self)
 {
-    //output << particles;
+    return output << self.position << self.velocity;
+}
+
+QDataStream& operator>>(QDataStream &input, SingularState &self)
+{
+    return input >> self.particles;
+}
+
+QDataStream& operator<<(QDataStream &output, const SingularState &self)
+{
+    return output << self.particles;
+}
+
 }

@@ -11,83 +11,75 @@
 
 using namespace Simulation;
 
-VelocityMap::VelocityMap(unsigned int n, unsigned int m, bool IsFromFile)
+VelocityMap::VelocityMap(unsigned int n)
 {
     unsigned int i;
     Pos_Vel = new double* [n];
     for (i = 0; i < n; i++)
-        Pos_Vel[i] = new double [m];
-    XIndex = n;
-    YIndex = m;
-    if (IsFromFile)
-        this->Load_Stream(Load_Vel); // ХХХ нужно исправить!
+        Pos_Vel[i] = new double[2];
+    Size = n;
 }
 
 
 VelocityMap::~VelocityMap()
 {
     unsigned int i;
-    for (i = 0; i < XIndex; i++)
+    for (i = 0; i < Size; i++)
         delete [] Pos_Vel[i];
+    delete [] Pos_Vel;
 }
 
 
-void VelocityMap::Load_Stream(QString FileName) // Функция загрузки из потока данных матрицы n x m
+VelocityMap *VelocityMap::LoadText(QFile *file) // Функция загрузки из потока данных матрицы n x m
 {
-    double Var;                                  // переменные
-    QFile file(FileName);                              // поток чтения из файла
 
-    unsigned int i, j;                         // i - столбцы, j - строки
+    int i, j;                         // i - столбцы, j - строки
 
-    // Проверка успешности открытия файла
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            std::cout<<"\n Error of the file opening - Loading";
-                   exit(1);
-        }
+    QTextStream stream(file);
 
-    QTextStream stream(&file);
+    int size;
+    stream >> size;
 
-    for (i=0; i < XIndex; i++)
+    VelocityMap *m = new VelocityMap(size);
+
+    for (i=0; i < size; i++)
     {
-        for(j=0; j < YIndex; j++)
+        for(j=0; j < 2; j++)
         {
-            stream >> Var;
-            this->SetNumber(i, j, Var);
+            stream >> m->Pos_Vel[i][j];
         }
     }
 
-// Закрытие файла
-    file.close();
+    return m;
 }
 
-
-void VelocityMap::Save_Stream(QString FileName)   // Функция сохранения в поток данных
+VelocityMap *VelocityMap::load_stream(QDataStream &input)
 {
- double Var;
- QFile file(FileName);                                           // поток записи в файл
- unsigned int i,j;
+    int i, j;
+    quint32 size;
+    input >> size;
+    VelocityMap *m = new VelocityMap(size);
+    for (i=0; i < size; i++)
+    {
+        for(j=0; j < 2; j++)
+        {
+            input >> m->Pos_Vel[i][j];
+        }
+    }
+    return m;
+}
 
-   if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
-   {
-       std::cout<<"\n Error of the file opening - Saving";
-       exit(1);
-   }
-
-   QTextStream stream(&file);
-
-  for(i=0; i < XIndex; i++)
-   {
-      stream << "\n\n";
-      for(j=0; j < YIndex; j++)
-      {
-            Var = this->GetNumber(i, j);
-            stream << Var << " ";
-      }
-   }
- std::cout << "The data was recorded" << std::endl;
- stream.flush();
- file.close();
+void VelocityMap::save_stream(QDataStream &output)
+{
+    int i, j;
+    output << (quint32)Size;
+    for (i=0; i < Size; i++)
+    {
+        for(j=0; j < 2; j++)
+        {
+            output << Pos_Vel[i][j];
+        }
+    }
 }
 
 QSize VelocityMap::get_size()
@@ -96,9 +88,9 @@ QSize VelocityMap::get_size()
 }
 
 
-double VelocityMap::GetNumber(unsigned int n, unsigned int m)
+double VelocityMap::GetNumber(unsigned int n, unsigned int m) const
 {
-    if (n < XIndex && m < YIndex)
+    if (n < Size && m < 2)
         return Pos_Vel[n][m];
     else
         return 0;
@@ -115,20 +107,18 @@ double VelocityMap::GetNumber(unsigned int n, unsigned int m)
 
 void VelocityMap::SetNumber(unsigned int n, unsigned int m, double Var)
 {
-    if (n < XIndex && m < YIndex)
+    if (n < Size && m < 2)
         Pos_Vel[n][m] = Var;
 }
 
 
-QPointF VelocityMap::Get_Velocity_At (double x, double y)            // Интерполяция
+QPointF VelocityMap::Get_Velocity_At (double x, double y) const            // Интерполяция
 
 {
     //Хотим попасть в нужный квадрат
 
     int int_x = x;                                    // целая часть
     int int_y = y;
-
-    this->Load_Stream(Load_Vel);                            // загружаем карту скоростей
 
     int n = GetNumber(0,0);                           // высота карты
     int m = GetNumber(0,1);                           // ширина
@@ -205,7 +195,7 @@ QPointF VelocityMap::Get_Velocity_At (double x, double y)            // Инте
 }
 
 
-QPointF VelocityMap::Calculate_Force (double x, double y, QPointF V)             // Сила F = P*S; P = [ro*v^2]/2 - Bernulli; x, y нужно будет заменит на i - номер частицы(узнаем из SingularState)
+QPointF VelocityMap::Calculate_Force (double x, double y, QPointF V) const             // Сила F = P*S; P = [ro*v^2]/2 - Bernulli; x, y нужно будет заменит на i - номер частицы(узнаем из SingularState)
 {                                                                               // F(вязк.) = - 6pi * VISCOSITY * R * (Vчаст.-Vводы) - Stocks ; V - particle, v - H20
 
     QPointF v;                                                                 // Скорость воды в точке (x,y)
@@ -225,17 +215,6 @@ QPointF VelocityMap::Calculate_Force (double x, double y, QPointF V)            
     F[1] = - 6 * PI * RADIUS * VISCOSITY * (Vy - vy);                   // Fy
 
     return QPointF(F[0], F[1]);
-}
-
-
-QString VelocityMap::FileName() const
-{
-    return m_FileName;
-}
-
-void VelocityMap::setFileName(const QString &FileName)
-{
-    m_FileName = FileName;
 }
 
 

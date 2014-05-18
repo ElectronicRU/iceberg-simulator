@@ -9,6 +9,5 @@
         <file>images/file-open-32.png</file>
         <file>images/file-save-32.png</file>
         <file>Load_Vel.txt</file>
-        <file>Save_Vel.txt</file>
     </qresource>
 </RCC>

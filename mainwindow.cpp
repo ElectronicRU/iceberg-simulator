@@ -12,6 +12,8 @@
 #include <qwt.h>
 
 using namespace Visual;
+using Simulation::VelocityMap;
+using Simulation::History;
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -27,8 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionLoadMap->setShortcut(QString("Ctrl+M"));
     ui->actionOpenFile->setShortcut(QString("Ctrl+O"));
     ui->actionSaveFile->setShortcut(QString("Ctrl+S"));
-
-    updateActions();
 }
 
 
@@ -40,7 +40,7 @@ MainWindow::~MainWindow()
 void MainWindow::setHistory(History *history)
 {
     ui->historyScreen->set_history(history);
-    ui->playbackToolBar->setEnabled(true);
+    emit loaded(true);
 }
 
 void MainWindow::seekTime(double sliderValue)
@@ -68,15 +68,6 @@ void MainWindow::setLimits(qreal maxtime)
     ui->timeSlider->setPageSteps(qRound(maxtime / STEP));
 }
 
-
-void MainWindow::updateActions()
-{
-    ui->actionLoadMap->setEnabled(true);
-    ui->actionOpenFile->setEnabled(true);
-    ui->actionSaveFile->setEnabled(true);
-}
-
-
 void MainWindow::loadMap()
 {
     QString FileName = QFileDialog::getOpenFileName(this, tr("Load Velocity map"),
@@ -94,64 +85,60 @@ void MainWindow::loadMap()
 
     }
 
-    Simulation::VelocityMap map(243,2,true);
-    map.setFileName(FileName);
-    map.Load_Stream(FileName);
+    VelocityMap *map = VelocityMap::LoadText(&file);
+
+    velmapFileName = FileName;
+    setHistory(new History(map));
 
     QMessageBox::information(this, "Successful opening",
                              "The Velocity Map was successfully opened");
+    file.close();
 }
 
 void MainWindow::saveFile()
 {
-    Simulation::VelocityMap map(243,2,true);
-
-        QString FileName = map.FileName();
-
-        if (FileName.isEmpty())
-            FileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+    QString FileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                                     "",
-                                                    tr("Docs(*.txt)"));        //XXX нужно поставить нужное разрешение
-        QFile file(FileName);
-        if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::warning(this,
-                                tr("File error"),
-                                tr("Failed to save\n%1").arg(FileName));
-            map.setFileName(QString());
-        } else {
-
-            map.Save_Stream(FileName); // XXX здесь нужно поменять FileName на сохранение данных расчета, пока для проверки сохраняется карта скоростей
-            QMessageBox::information(this, "Successful saving",
-                                     "The data was successfully recorded");
-            map.setFileName(FileName);
-
-
-
-        }
-file.close();
+                                                    tr("Docs(*.sim)"));
+    if (FileName.isEmpty())
+        return;
+    QFile file(FileName);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::warning(this,
+                            tr("File error"),
+                            tr("Failed to open file\n%1").arg(FileName));
+        return;
+    }
+    ui->historyScreen->get_history()->save_stream(&file);
+    file.flush();
+    file.close();
 }
 
 void MainWindow::openFile()
 {
     QString FileName = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                     "",
-                                                    tr("Docs(*.txt)"));        //XXX нужно поставить нужное разрешение
+                                                    tr("Docs(*.sim)"));
+
     if (FileName.isEmpty())
         return;
 
     QFile file(FileName);
-    if (!file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly))
+    {
         QMessageBox::warning(this,
                             tr("File error"),
                             tr("Failed to open file\n%1").arg(FileName));
         return;
-
     }
 
-/* XXX нужна новая функция load - что именно загружаем
-         QMessageBox::information(this, "Successful opening",
-                                 "The file was successfully opened");
-*/
+    History *h = new History();
+    if (h->load_stream(&file))
+        setHistory(h);
+    else
+        delete h;
+    file.close();
 }
 
 

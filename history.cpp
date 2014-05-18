@@ -2,29 +2,47 @@
 #include <QtCore/QtMath>
 #include <QDataStream>
 
-using namespace Simulation;
+namespace Simulation {
 
-History::History(SingularState s)
-    : states(), maxtime(0), currtime(0)
+const quint32 History::MAGIC = 0x1CEBE;
+
+
+
+History::History() :
+    History(nullptr)
 {
-    states << s;
 }
 
 History::History(VelocityMap *velmap) :
-    History(SingularState(velmap))
+    states(), maxtime(0), currtime(0), velocity_map(velmap)
 {
+    states << SingularState();
 }
 
-void Simulation::History::load_stream(QDataStream input)
+History::~History()
 {
-    qint32 icursor;
-    //input >> icursor >> states >> maxtime;
-    //cursor = icursor;
+    delete velocity_map;
 }
 
-void Simulation::History::save_stream(QDataStream output)
+bool History::load_stream(QFile *f)
 {
-    //output << (qint32) cursor << states << maxtime;
+    QDataStream input(f);
+    quint32 magic;
+    input >> magic;
+    if (magic != MAGIC)
+        return false;
+    velocity_map = VelocityMap::load_stream(input);
+    input >> states >> maxtime >> currtime;
+    return true;
+}
+
+void History::save_stream(QFile *f)
+{
+    QDataStream output(f);
+    output << MAGIC;
+    velocity_map->save_stream(output);
+    output << states << maxtime << currtime;
+
 }
 
 bool History::seek(qreal time)
@@ -48,7 +66,7 @@ qreal History::tell()
 
 void History::add_particles(QList<QPointF> points)
 {
-    states[0].add_particles(points);
+    states[0].add_particles(points, velocity_map);
     chain_update();
 }
 
@@ -101,7 +119,9 @@ void History::setMaxtime(const qreal &value)
     for (int i = 0; i < delta; i++) {
         // I feel bad, but I have hopes for C++11 move semantics. Please, let no deep copy occur!
         // Seriously though, managing a list of ALLOCATED SingularStates by hand is more hellish.
-        states.append(states.last().successor());
+        SingularState *s = &states.last();
+        states.append(SingularState());
+        states.last().full_update(s, velocity_map);
     }
     if (delta < 0)
     {
@@ -111,7 +131,7 @@ void History::setMaxtime(const qreal &value)
 
 VelocityMap *History::get_velocity_map()
 {
-    return states[0].velocity_map;
+    return velocity_map;
 }
 
 
@@ -119,7 +139,7 @@ void History::chain_update()
 {
     for (int i = 1; i < states.size(); i++)
     {
-        states[i].full_update(&states[i-1]);
+        states[i].full_update(&states[i-1], velocity_map);
     }
 }
 
@@ -140,6 +160,7 @@ QPolygonF History::get_trace_from(int number, qreal start)
     return result;
 }
 
+}
 
 
 

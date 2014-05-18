@@ -29,6 +29,8 @@ struct Particle
         return p;
     }
 };
+
+
 }
 
 #endif // CORE_H

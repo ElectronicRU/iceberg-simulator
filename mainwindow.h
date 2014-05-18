@@ -25,6 +25,9 @@ public:
 
     void setHistory(History *history);
 
+signals:
+    void loaded(bool);
+
 public slots:
     void seekTime(double sliderValue);
     void moveSlider(qreal screenTime);
@@ -35,12 +38,10 @@ public slots:
     void openFile();
     void saveFile();
 
-private slots:
-    void updateActions();
-
 private:
     Ui::MainWindow *ui;
     double sliderValueCache;
+    QString velmapFileName;
 };
 }
 

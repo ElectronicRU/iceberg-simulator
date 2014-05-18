@@ -69,6 +69,9 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="fileToolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="contextMenuPolicy">
     <enum>Qt::NoContextMenu</enum>
    </property>
@@ -146,7 +149,10 @@
     <string>Load Velocity map </string>
    </property>
    <property name="toolTip">
-    <string>Load Velocity map(Ctrl+M)</string>
+    <string>Load velocity map from a text file (Ctrl+M)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionOpenFile">
@@ -160,8 +166,14 @@
    <property name="toolTip">
     <string>Open File (Ctrl+O)</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSaveFile">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="mainwindow.qrc">
      <normaloff>:/images/file-save-32.png</normaloff>:/images/file-save-32.png</iconset>
@@ -171,6 +183,9 @@
    </property>
    <property name="toolTip">
     <string>Save File (Ctrl+S)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>
@@ -345,8 +360,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>loaded(bool)</signal>
+   <receiver>actionSaveFile</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>loaded(bool)</signal>
+   <receiver>playbackToolBar</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>37</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
+  <signal>loaded(bool)</signal>
   <slot>seekTime(double)</slot>
   <slot>moveSlider(qreal)</slot>
   <slot>untogglePlay()</slot>

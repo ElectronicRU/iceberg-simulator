@@ -7,10 +7,11 @@ namespace Simulation {
 class History
 {
 public:
-    History(SingularState);
+    History();
     History(VelocityMap *velmap);
-    void load_stream(QDataStream input);
-    void save_stream(QDataStream output);
+    ~History();
+    bool load_stream(QFile *input);
+    void save_stream(QFile *output);
     bool seek(qreal time);
     qreal tell();
     void add_particles(QList<QPointF> points);
@@ -27,9 +28,11 @@ public:
     VelocityMap *get_velocity_map();
 
 private:
+    static const quint32 MAGIC;
     QList<SingularState> states;
     qreal maxtime;
     qreal currtime;
+    VelocityMap *velocity_map;
     void chain_update();
     QPolygonF get_trace_from(int number, qreal start);
 };
