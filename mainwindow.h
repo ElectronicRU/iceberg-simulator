@@ -33,6 +33,7 @@ public slots:
     void moveSlider(qreal screenTime);
     void untogglePlay();
     void setLimits(qreal maxtime);
+    void requestMaxtime();
 
     void loadMap();
     void openFile();

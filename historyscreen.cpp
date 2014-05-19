@@ -1,5 +1,4 @@
 #include "historyscreen.h"
-#include <QtCore/QtMath>
 #include <QPainter>
 using namespace Visual;
 
@@ -42,8 +41,18 @@ void HistoryScreen::set_history(History *value)
         scene->addItem(v);
         particle_views.append(v);
     }
-    scene->setSceneRect(QRectF(QPointF(),
-                        history->get_velocity_map()->get_size()));
+    QRectF rect = QRectF(QPointF(),
+                               history->get_velocity_map()->get_size());
+    rect.adjust(-1, -1, 1, 1);
+    scene->setSceneRect(rect);
+    fitInView(scene->sceneRect(),
+              Qt::KeepAspectRatio);
+
+    Scenery *scenery = new Scenery(history->get_velocity_map());
+    scenery->setZValue(-1);
+    scenery->setPen(QPen(Qt::blue, 0));
+    scene->addItem(scenery);
+
     update_scene(0);
     emit maxtimeChanged(history->getMaxtime());
 }
@@ -116,94 +125,3 @@ void HistoryScreen::update_scene(qreal time)
 }
 
 // ***************************************************************
-
-
-QPainterPath ParticleView::birdy;
-
-ParticleView::ParticleView(QGraphicsItem *parent) :
-    QAbstractGraphicsShapeItem(parent)
-{
-    QPainterPath p;
-    p.moveTo(0, 0);
-    p.lineTo(1, 0);
-    p.moveTo(0.75, 0.25);
-    p.lineTo(1, 0);
-    p.lineTo(0.75, -0.25);
-    arrow = new QGraphicsPathItem(p, this);
-    arrow->hide();
-    arrow->setBrush(Qt::NoBrush);
-    setAcceptHoverEvents(true);
-    if (birdy.isEmpty())
-    {
-        qreal k = qSqrt(0.5);
-        birdy.moveTo(0.5, 0);
-        birdy.lineTo(-0.5 * k, 0.5 * k);
-        birdy.lineTo(0, 0);
-        birdy.lineTo(-0.5 * k, -0.5 * k);
-        birdy.lineTo(0.5, 0);
-    }
-}
-
-ParticleView::~ParticleView()
-{
-}
-
-QRectF ParticleView::boundingRect() const
-{
-    qreal penwidth = pen().widthF();
-    return QRectF(-0.5 - penwidth/2,
-                  -0.5 - penwidth/2,
-                  1 + penwidth,
-                  1 + penwidth);
-}
-
-void ParticleView::paint(QPainter *painter, const QStyleOptionGraphicsItem *i, QWidget *w)
-{
-    painter->save();
-    painter->setPen(pen());
-    painter->setBrush(Qt::NoBrush);
-    painter->drawEllipse(QPointF(0, 0), 0.5, 0.5);
-    painter->setBrush(brush());
-    if (_vel.length() < CUTOFF)
-    {
-        painter->drawEllipse(QPointF(0, 0), 0.2, 0.2);
-    }
-    else
-    {
-        painter->drawPath(birdy);
-    }
-    painter->restore();
-}
-
-QPainterPath ParticleView::shape() const
-{
-    QPainterPath p;
-    p.addEllipse(boundingRect());
-    return p;
-}
-
-void ParticleView::setPen(const QPen &pen)
-{
-    QAbstractGraphicsShapeItem::setPen(pen);
-    arrow->setPen(pen);
-}
-
-void ParticleView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    arrow->show();
-    arrow->update();
-}
-
-void ParticleView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    arrow->hide();
-    arrow->update();
-}
-
-
-void Visual::ParticleView::setVel(const QPointF &velocity)
-{
-    _vel.setP2(velocity);
-    arrow->setScale(_vel.length());
-    this->setRotation(-_vel.angle()); // ccw in QLineF, but cw in setRotation
-}

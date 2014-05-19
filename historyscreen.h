@@ -8,35 +8,12 @@
 #include <QPainter>
 #include <QTimer>
 #include "history.h"
+#include "graphics.h"
 
 
 namespace Visual {
 using Simulation::History;
 const qreal SCALE = 20.0;
-class ParticleView : public QAbstractGraphicsShapeItem
-{
-public:
-    ParticleView(QGraphicsItem *parent = 0);
-    ~ParticleView();
-    QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
-    QPainterPath shape() const;
-    void setVel(const QPointF &velocity);
-    QPointF vel()
-    {
-        return _vel.p2();
-    }
-    void setPen(const QPen &pen);
-
-private:
-    QLineF _vel;
-    QGraphicsPathItem *arrow;
-    static QPainterPath birdy;
-    const qreal CUTOFF = 0.1;
-protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-};
 
 class HistoryScreen : public QGraphicsView
 {

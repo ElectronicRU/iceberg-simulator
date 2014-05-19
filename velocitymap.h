@@ -27,7 +27,7 @@ public:
     static VelocityMap* load_stream(QDataStream &input);
     void save_stream(QDataStream &output);
 
-    QSize get_size();
+    QSize get_size() const;
 
     QPointF Get_Velocity_At(double x, double y) const;                    // интерполяция
     QPointF Calculate_Force(double x, double y, QPointF V) const;                    // расчет силы давления воды в точке (x,y)

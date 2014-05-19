@@ -16,20 +16,44 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QwtSlider" name="timeSlider">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="scalePosition">
-       <enum>QwtSlider::LeadingScale</enum>
-      </property>
-      <property name="trough">
-       <bool>false</bool>
-      </property>
-      <property name="groove">
-       <bool>true</bool>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="sliderLayout">
+      <item>
+       <widget class="QwtSlider" name="timeSlider">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="scalePosition">
+         <enum>QwtSlider::LeadingScale</enum>
+        </property>
+        <property name="trough">
+         <bool>false</bool>
+        </property>
+        <property name="groove">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="maxvalEdit">
+        <property name="toolTip">
+         <string>Change maximum time</string>
+        </property>
+        <property name="icon">
+         <iconset resource="mainwindow.qrc">
+          <normaloff>:/images/standardbutton-yes-32.png</normaloff>:/images/standardbutton-yes-32.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="Visual::HistoryScreen" name="historyScreen"/>
@@ -392,6 +416,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>maxvalEdit</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>requestMaxtime()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>735</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>763</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>loaded(bool)</signal>
@@ -399,5 +439,6 @@
   <slot>moveSlider(qreal)</slot>
   <slot>untogglePlay()</slot>
   <slot>setLimits(qreal)</slot>
+  <slot>requestMaxtime()</slot>
  </slots>
 </ui>

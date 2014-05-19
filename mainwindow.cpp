@@ -9,6 +9,7 @@
 #include <QToolButton>
 #include <qevent.h>
 
+#include <QInputDialog>
 #include <qwt.h>
 
 using namespace Visual;
@@ -66,6 +67,21 @@ void MainWindow::setLimits(qreal maxtime)
     ui->timeSlider->setUpperBound(maxtime);
     ui->timeSlider->setTotalSteps(qRound(maxtime / QUANTUM));
     ui->timeSlider->setPageSteps(qRound(maxtime / STEP));
+}
+
+void MainWindow::requestMaxtime()
+{
+    History *h = ui->historyScreen->get_history();
+    qreal currmaxtime = h->getMaxtime();
+    bool ok;
+    qreal maxtime = QInputDialog::getDouble(this, "Edit maximum time", "Enter new maximum time", currmaxtime, 0, 1e5,
+                                            1, &ok);
+    if (ok)
+    {
+        h->setMaxtime(maxtime);
+        setLimits(maxtime);
+        ui->historyScreen->seek_home();
+    }
 }
 
 void MainWindow::loadMap()

@@ -82,7 +82,7 @@ void VelocityMap::save_stream(QDataStream &output)
     }
 }
 
-QSize VelocityMap::get_size()
+QSize VelocityMap::get_size() const
 {
     return QSize(GetNumber(0, 1), GetNumber(0, 0));
 }

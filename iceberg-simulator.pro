@@ -17,14 +17,16 @@ SOURCES += main.cpp\
     singularstate.cpp \
     history.cpp \
     velocitymap.cpp \
-    historyscreen.cpp
+    historyscreen.cpp \
+    graphics.cpp
 
 HEADERS  += mainwindow.h \
     singularstate.h \
     core.h \
     history.h \
     velocitymap.h \
-    historyscreen.h
+    historyscreen.h \
+    graphics.h
 
 FORMS    += mainwindow.ui
 
