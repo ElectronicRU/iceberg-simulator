@@ -13,7 +13,7 @@ class SingularState
 friend class History;
 public:
     SingularState();
-    void add_particles(QList<QPointF> points, const VelocityMap *velocity_map);
+    void add_particle(QPointF point, const VelocityMap *velocity_map);
     void remove_particles(QList<int> positions);
     QList<int> find_enclosed(QPolygonF shape);
     void generate_enclosed(QPolygonF shape, qreal density, const VelocityMap *velocity_map);

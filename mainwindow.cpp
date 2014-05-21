@@ -22,14 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    connect(ui->actionLoadMap, SIGNAL(triggered()), this, SLOT(loadMap()));
-    connect(ui->actionOpenFile, SIGNAL(triggered()), this, SLOT(openFile()));
-    connect(ui->actionSaveFile, SIGNAL(triggered()), this, SLOT(saveFile()));
-
-    ui->actionLoadMap->setShortcut(QString("Ctrl+M"));
-    ui->actionOpenFile->setShortcut(QString("Ctrl+O"));
-    ui->actionSaveFile->setShortcut(QString("Ctrl+S"));
+    ui->historyScreen->setEditAction(ui->actionAddParticle);
 }
 
 

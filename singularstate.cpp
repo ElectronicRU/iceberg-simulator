@@ -9,15 +9,12 @@ SingularState::SingularState() :
 {
 }
 
-void SingularState::add_particles(QList<QPointF> points, const VelocityMap *velocity_map)
+void SingularState::add_particle(QPointF point, const VelocityMap *velocity_map)
 {
-    for (auto p: points)
-    {
-        Particle new_p;
-        new_p.position = p; // XXX calculate the velocity properly
-        new_p.velocity = velocity_map->Get_Velocity_At(p.x(), p.y());
-        particles.append(new_p);
-    }
+    Particle new_p;
+    new_p.position = point;
+    new_p.velocity = velocity_map->Get_Velocity_At(point.x(), point.y());
+    particles.append(new_p);
 }
 
 void SingularState::remove_particles(QList<int> positions)
@@ -59,7 +56,6 @@ void SingularState::generate_enclosed(QPolygonF shape, qreal density, const Velo
     area = qFabs(area);
     int number_of_points = qRound(area * density);
     QRectF rect = shape.boundingRect();
-    QList<QPointF> points;
     qreal x1, y1, x2, y2;
     rect.getCoords(&x1, &y1, &x2, &y2);
 
@@ -74,10 +70,9 @@ void SingularState::generate_enclosed(QPolygonF shape, qreal density, const Velo
         if (shape.containsPoint(p, Qt::OddEvenFill))
         {
             number_of_points--;
-            points.append(p);
+            add_particle(p, velocity_map);
         }
     }
-    add_particles(points, velocity_map);
 }
 
 
@@ -87,7 +82,7 @@ void SingularState::update_from(const SingularState *ancestor, const VelocityMap
     int old_size = particles.size(), new_size = ancestor->particles.size();
     // here, assuming new_size >= old_size
     particles.resize(new_size);
-    std::copy(&ancestor->particles[old_size], &ancestor->particles[new_size], &particles[old_size]);
+    std::copy(ancestor->particles.begin() + old_size, ancestor->particles.end(), particles.begin() + old_size);
     recalculate(old_size, new_size, velocity_map);
 }
 

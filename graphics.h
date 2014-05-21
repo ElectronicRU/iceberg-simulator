@@ -15,6 +15,8 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
     void setVel(const QPointF &velocity);
     void limitLength(qreal limit) { _limitLength = limit; }
+    int type() const { return Type; }
+    enum { Type = UserType + 1 };
 
 private:
     QPainterPath p;
@@ -36,6 +38,8 @@ public:
         return _vel.p2();
     }
     void setPen(const QPen &pen);
+    int type() const { return Type; }
+    enum { Type = UserType + 2 };
 
 private:
     QLineF _vel;

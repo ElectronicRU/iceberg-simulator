@@ -112,6 +112,19 @@
    <addaction name="actionOpenFile"/>
    <addaction name="actionSaveFile"/>
   </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionAddParticle"/>
+   <addaction name="actionDeleteSelected"/>
+  </widget>
   <action name="actionPlay">
    <property name="checkable">
     <bool>true</bool>
@@ -212,6 +225,30 @@
     <string>Ctrl+S</string>
    </property>
   </action>
+  <action name="actionAddParticle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/images/right-32.png</normaloff>:/images/right-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add particle</string>
+   </property>
+  </action>
+  <action name="actionDeleteSelected">
+   <property name="icon">
+    <iconset resource="mainwindow.qrc">
+     <normaloff>:/images/stop-32.png</normaloff>:/images/stop-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete selected</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -233,6 +270,7 @@
     <slot>stop()</slot>
     <slot>seek_home()</slot>
     <slot>seek_end()</slot>
+    <slot>delete_selected()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -432,6 +470,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLoadMap</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadMap()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpenFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDeleteSelected</sender>
+   <signal>triggered()</signal>
+   <receiver>historyScreen</receiver>
+   <slot>delete_selected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>365</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>loaded(bool)</signal>
@@ -440,5 +542,8 @@
   <slot>untogglePlay()</slot>
   <slot>setLimits(qreal)</slot>
   <slot>requestMaxtime()</slot>
+  <slot>loadMap()</slot>
+  <slot>openFile()</slot>
+  <slot>saveFile()</slot>
  </slots>
 </ui>

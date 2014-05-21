@@ -65,6 +65,7 @@ ParticleView::ParticleView(QGraphicsItem *parent) :
         birdy.lineTo(-0.5 * k, -0.5 * k);
         birdy.lineTo(0.5, 0);
     }
+    setFlag(ItemIsSelectable);
 }
 
 ParticleView::~ParticleView()
@@ -74,17 +75,27 @@ ParticleView::~ParticleView()
 QRectF ParticleView::boundingRect() const
 {
     qreal penwidth = pen().widthF();
-    return QRectF(-0.5 - penwidth/2,
+    QRectF rect = QRectF(-0.5 - penwidth/2,
                   -0.5 - penwidth/2,
                   1 + penwidth,
                   1 + penwidth);
+    if (isSelected())
+        rect.adjust(-0.05,-0.05, 0.05, 0.05);
+    return rect;
 }
 
 void ParticleView::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
-    painter->setPen(pen());
     painter->setBrush(Qt::NoBrush);
+    if (isSelected())
+    {
+        QPen pen2 = pen();
+        pen2.setStyle(Qt::DashLine);
+        painter->setPen(pen2);
+        painter->drawEllipse(QPointF(0, 0), 0.55, 0.55);
+    }
+    painter->setPen(pen());
     painter->drawEllipse(QPointF(0, 0), 0.5, 0.5);
     painter->setBrush(brush());
     if (_vel.length() < CUTOFF)
@@ -153,7 +164,7 @@ void Scenery::setPen(const QPen &pen)
     auto children = childItems();
     for (QGraphicsItem *child : children)
     {
-        auto arrow = dynamic_cast<ArrowItem*>(child);
+        auto arrow = qgraphicsitem_cast<ArrowItem*>(child);
         arrow->setPen(pen);
     }
 }

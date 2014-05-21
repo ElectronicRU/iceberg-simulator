@@ -10,5 +10,7 @@
         <file>images/file-save-32.png</file>
         <file>Load_Vel.txt</file>
         <file>images/standardbutton-yes-32.png</file>
+        <file>images/right-32.png</file>
+        <file>images/stop-32.png</file>
     </qresource>
 </RCC>

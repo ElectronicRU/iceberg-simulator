@@ -64,9 +64,16 @@ qreal History::tell()
     return currtime;
 }
 
+void History::add_particle(QPointF point)
+{
+    states[0].add_particle(point, velocity_map);
+    chain_update();
+}
+
 void History::add_particles(QList<QPointF> points)
 {
-    states[0].add_particles(points, velocity_map);
+    for (auto point: points)
+        states[0].add_particle(point, velocity_map);
     chain_update();
 }
 
@@ -139,7 +146,7 @@ void History::chain_update()
 {
     for (int i = 1; i < states.size(); i++)
     {
-        states[i].full_update(&states[i-1], velocity_map);
+        states[i].update_from(&states[i-1], velocity_map);
     }
 }
 

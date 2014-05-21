@@ -7,6 +7,8 @@
 #include <QAbstractGraphicsShapeItem>
 #include <QPainter>
 #include <QTimer>
+#include <QAction>
+#include <QMouseEvent>
 #include "history.h"
 #include "graphics.h"
 
@@ -20,9 +22,11 @@ class HistoryScreen : public QGraphicsView
     Q_OBJECT
 public:
     explicit HistoryScreen(QWidget *parent = 0);
+    ~HistoryScreen();
 
     History *get_history() const;
     void set_history(History *value);
+    void setEditAction(QAction *action);
 
 signals:
     void at(qreal time);
@@ -35,11 +39,16 @@ public slots:
     void seek(qreal time);
     void seek_home();
     void seek_end();
+    void delete_selected();
 
 private:
     History *history;
     QGraphicsScene *scene;
     QList<ParticleView*> particle_views;
+    QAction *edit_action = 0;
+    bool in_edit_mode = false;
+    ParticleView *editing_it = 0;
+
     void pause();
 
     void update_scene(qreal time);
@@ -51,6 +60,13 @@ private:
 
 private slots:
     void timer_tick();
+    void edit_mode(bool mode);
+
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 }
 

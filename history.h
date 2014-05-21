@@ -14,6 +14,7 @@ public:
     void save_stream(QFile *output);
     bool seek(qreal time);
     qreal tell();
+    void add_particle(QPointF point);
     void add_particles(QList<QPointF> points);
     void remove_particles(QList<int> positions);
     void full_update();

@@ -8,6 +8,7 @@ HistoryScreen::HistoryScreen(QWidget *parent) :
     starttime(0), timer(this)
 {
     setScene(scene);
+    setDragMode(RubberBandDrag);
     setRenderHint(QPainter::Antialiasing);
     QTransform m;
     m.scale(SCALE, -SCALE);
@@ -16,6 +17,12 @@ HistoryScreen::HistoryScreen(QWidget *parent) :
     timer.setInterval(period);
     connect(&timer, &QTimer::timeout, this, &HistoryScreen::timer_tick);
 }
+
+HistoryScreen::~HistoryScreen()
+{
+    delete scene;
+}
+
 History *HistoryScreen::get_history() const
 {
     return history;
@@ -57,6 +64,16 @@ void HistoryScreen::set_history(History *value)
     emit maxtimeChanged(history->getMaxtime());
 }
 
+void HistoryScreen::setEditAction(QAction *action)
+{
+    edit_action = action;
+    connect(action, SIGNAL(triggered(bool)), this, SLOT(edit_mode(bool)));
+    if (history && !history->tell())
+        action->setEnabled(true);
+    else
+        action->setEnabled(false);
+}
+
 void HistoryScreen::playpause()
 {
     if (timer.isActive())
@@ -92,6 +109,31 @@ void HistoryScreen::seek_end()
     seek(history->getMaxtime());
 }
 
+void HistoryScreen::delete_selected()
+{
+    auto selected = QSet<QGraphicsItem*>::fromList(scene->selectedItems());
+    QList<int> positions;
+    int ito = 0;
+    for (int i = 0; i < particle_views.size(); i++)
+    {
+        auto item = qgraphicsitem_cast<QGraphicsItem *>(particle_views[i]);
+        particle_views[ito] = particle_views[i];
+        if (selected.contains(item))
+        {
+            scene->removeItem(item);
+            delete particle_views[i]; particle_views[i] = 0;
+            positions.append(i);
+        }
+        else
+        {
+            ito++;
+        }
+    }
+    history->remove_particles(positions);
+    particle_views.erase(particle_views.begin() + ito, particle_views.end());
+    update();
+}
+
 void HistoryScreen::pause()
 {
     timer.stop();
@@ -109,8 +151,19 @@ void HistoryScreen::timer_tick()
     }
 }
 
+void HistoryScreen::edit_mode(bool mode)
+{
+    if (mode != in_edit_mode)
+    {
+        in_edit_mode = mode;
+        edit_action->setChecked(mode);
+    }
+}
+
 void HistoryScreen::update_scene(qreal time)
 {
+    if (edit_action)
+        edit_action->setEnabled(time == 0);
     if (!history->seek(time))
         return;
     for (int i = 0; i < history->size(); i++)
@@ -123,5 +176,59 @@ void HistoryScreen::update_scene(qreal time)
     emit at(time);
     update();
 }
+
+
+void HistoryScreen::mousePressEvent(QMouseEvent *event)
+{
+    if (in_edit_mode)
+    {
+        QPointF realpos = mapToScene(event->pos());
+        QBrush brush(Qt::blue);
+        QPen pen(brush, 0);
+        editing_it = new ParticleView();
+        editing_it->setBrush(brush);
+        editing_it->setPen(pen);
+        editing_it->setPos(realpos);
+        editing_it->setVel(history->get_velocity_map()->Get_Velocity_At(realpos.x(), realpos.y()));
+        scene->addItem(editing_it);
+    }
+    else
+    {
+        QGraphicsView::mousePressEvent(event);
+    }
+}
+
+void HistoryScreen::mouseMoveEvent(QMouseEvent *event)
+{
+    if (editing_it)
+    {
+        QPointF realpos = mapToScene(event->pos());
+        editing_it->setPos(realpos);
+        editing_it->setVel(history->get_velocity_map()->Get_Velocity_At(realpos.x(), realpos.y()));
+        editing_it->update();
+    }
+    else
+    {
+        QGraphicsView::mouseMoveEvent(event);
+    }
+}
+
+void HistoryScreen::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (editing_it)
+    {
+        QPointF realpos = mapToScene(event->pos());
+        history->add_particle(realpos);
+        particle_views.append(editing_it);
+        editing_it = 0;
+        update_scene(0);
+        edit_mode(false);
+    }
+    else
+    {
+        QGraphicsView::mouseReleaseEvent(event);
+    }
+}
+
 
 // ***************************************************************
